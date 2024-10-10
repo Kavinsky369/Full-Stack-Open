@@ -12,26 +12,28 @@ const App = () => {
   useEffect(() => {
     console.log('effect');
     axios
-    .get('http://localhost:3001/notes')
-    .then(response => {
-      console.log('promise fulfilled');
-      setNotes(response.data)
-    })
-  },[])
+      .get('http://localhost:3001/notes')
+      .then(response => {
+        console.log('promise fulfilled');
+        setNotes(response.data)
+      })
+  }, [])
   console.log('render', notes.length, 'notes')
 
   const addNote = (event) => {
     event.preventDefault()
     const objNote = {
-      id: notes.length + 1,
       content: newNote,
       important: Math.random() < 0.5
     }
-    if(newNote.trim() === ""){
+    if (newNote.trim() === "") {
       alert('There is not name')
-    }else{
-      setNotes(notes.concat(objNote))
-      setNewNote('')
+    } else {
+      axios.post('http://localhost:3001/notes', objNote)
+        .then(response => {
+          setNotes(notes.concat(response.data))
+          setNewNote('')
+        })
     }
   }
 
@@ -43,6 +45,17 @@ const App = () => {
     ? notes
     : notes.filter(note => note.important === true)
 
+
+  const toogleImportance = (id) => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(note => note.id !== id ? note : response.data))
+    })
+
+  }
   return (
     <>
       <h1>
@@ -51,17 +64,20 @@ const App = () => {
       <ul>
         {
           notesToShow.map((note) => {
-            return <Note key={note.id} note={note} />
+            return <Note key={note.id} note={note} toogleImportance={() => toogleImportance(note.id)} />
           })
         }
       </ul>
       <div>
         <button onClick={() => setShowAll(!showAll)}>Show {showAll ? 'filter' : 'All'}</button>
       </div>
-      <form onSubmit={addNote}>
-        <input type="text" value={newNote} onChange={handleChange} />
-        <button type='submit'>Add</button>
-      </form>
+      <div className='container-form'>
+        <form onSubmit={addNote}>
+          <input type="text" value={newNote} onChange={handleChange} />
+          <button type='submit'>Add</button>
+        </form>
+      </div>
+
     </>
   )
 }

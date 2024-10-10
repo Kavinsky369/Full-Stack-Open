@@ -4,33 +4,40 @@ import { useState } from "react"
 function App() {
 
   const [person, setPerson] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+    { name: 'Daniel', number: '56 3054 8812', id: 1 },
+  
   ])
 
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFind, setNameFind] = useState('')
+  const [idEdit, setIdEdit] = useState(null)
 
   const handleForm = (event) => {
     event.preventDefault();
-    const objContact = {
-      name: newName,
-      number: newNumber,
-      id: person.length + 1
-    }
-    if(newName.trim() == ''){
-     return
-    } else if (person.find((x) => x.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    if (idEdit != null) {
+      const updatedContacts = person.map(contact => {
+        return contact.id === idEdit ? { ...contact, name: newName, number: newNumber } : contact
+      })
+      setPerson(updatedContacts)
+      setIdEdit(null)
     } else {
-      setPerson(person.concat(objContact))
-      setNewName('')
-      setNewNumber('')
+      const objContact = {
+        name: newName,
+        number: newNumber,
+        id: person.length + 1
+      }
+      if (newName.trim() == '') {
+        return
+      } else if (person.find((x) => x.name === newName)) {
+        alert(`${newName} is already added to phonebook`)
+      } else {
+        setPerson(person.concat(objContact))
+      }
     }
+    setNewName('')
+    setNewNumber('')
   }
 
   const handleName = (event) => {
@@ -39,16 +46,28 @@ function App() {
 
   const handleNumber = (event) => {
     setNewNumber(event.target.value)
-    console.log(event.target.value);
   }
 
   const handleFind = (event) => {
     setNameFind(event.target.value)
   }
 
-  const filteredContacts = person.filter(contact => 
+  const filteredContacts = person.filter(contact =>
     contact.name.toLocaleLowerCase().includes(nameFind.toLocaleLowerCase())
   )
+
+  const handleEliminate = (id) => {
+    const updateContacts = person.filter(contact => contact.id !== id);
+    setPerson(updateContacts)
+  }
+
+  const handleUpdate = (id) => {
+    console.log('Do it click in', id);
+    const editUser = person.find(contact => contact.id === id);
+    setNewNumber(editUser.number);
+    setNewName(editUser.name);
+    setIdEdit(id)
+  }
 
   return (
     <>
@@ -60,28 +79,27 @@ function App() {
           Add new contact
         </h2>
         <form onSubmit={handleForm}>
-          Name: <input type="text" value={newName} onChange={handleName} />
-          Number : <input type='tel' value={newNumber} onChange={handleNumber} />
+          <div  className='form'>
+            Name: <input type="text" value={newName} onChange={handleName} />
+            Number : <input type='tel' value={newNumber} onChange={handleNumber} />
+            Find: <input type="text" value={nameFind} onChange={handleFind} />
+          </div>
           <div>
             <button type="submit">Add</button>
           </div>
         </form>
       </div>
-
-      <form>
-        <h2>
-          Search
-        </h2>
-         Find: <input type="text" value={nameFind} onChange={handleFind} />
-      </form>
-
-      <ul>
-         {filteredContacts.map(contact => (
-            <li key={contact.id}>
-              {contact.name} {contact.number}
-            </li>
-          ))}
-         </ul>
+      <ul >
+        {filteredContacts.map(contact => (
+          <li key={contact.id} className='render-contacts'>
+            {contact.name} {contact.number}
+            <div className='container-buttons'>
+              <button onClick={() => handleEliminate(contact.id)}>Delete</button>
+              <button onClick={() => handleUpdate(contact.id)}>Update</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </>
   )
 }

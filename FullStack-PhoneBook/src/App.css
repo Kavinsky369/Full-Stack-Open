@@ -40,19 +40,3 @@
 .read-the-docs {
   color: #888;
 }
-.render-contacts{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-}
-.form{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width: auto;
-}
-button{
-  margin: 10px;
-}
