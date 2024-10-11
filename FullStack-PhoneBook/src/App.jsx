@@ -10,14 +10,15 @@ function App() {
 
   const url = 'http://localhost:3000/contacts'
 
-
-  useEffect(() => {
+//Fetching data
+useEffect(()=>{
     axios.get(url)
-      .then(response => {
-        setPerson(response.data)
-      })
-      .catch(error => console.log("Error: ", error))
-  }, [])
+    .then(response => {
+      console.log('Response Data: ', response.data);
+      setPerson(response.data)
+    })
+},[])
+
 
   const handleForm = (event) => {
     event.preventDefault()
@@ -38,6 +39,7 @@ function App() {
       .catch(error => console.log('Error', error))
   }
 
+  //Manejar inputs
 
   const handleName = (event) => {
     setNewName(event.target.value)
@@ -53,6 +55,7 @@ function App() {
     contact.name.toLowerCase().includes(find.toLowerCase())
   );
 
+  //Delete
 
   const handleDelete = (id) => {
     axios.delete(`${url}/${id}`)
@@ -66,17 +69,17 @@ function App() {
     <>
       <h1>PhoneBook</h1>
       <form onSubmit={handleForm}>
-        <div>
+        <div className='inputs'>
           Name: <input type="text" value={newName} onChange={handleName} />
           Number: <input type="text" value={newNumber} onChange={handleNumber} />
           Find: <input type="text" value={find} onChange={handleFind} />
-          <button type='submit'>Send</button>
+          <button type='submit' className='send-Data'>Send</button>
         </div>
         <div>
           <h2>Contacts</h2>
           <ul>
             {filteredContacts.map(contact => (
-              <div key={contact.id}>
+              <div key={contact.id} className='contacts'>
                 <li>{contact.name} {contact.number}</li>
                 <button onClick={() => handleDelete(contact.id)}>Delete</button>
               </div>

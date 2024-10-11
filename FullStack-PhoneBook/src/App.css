@@ -40,3 +40,29 @@
 .read-the-docs {
   color: #888;
 }
+
+.inputs{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+}
+input{
+  margin: 10px;
+}
+.send-Data{
+  width: 80px;
+}
+.contacts{
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px;
+  padding: 10px;
+}
+
+li{
+  list-style: none;
+}
